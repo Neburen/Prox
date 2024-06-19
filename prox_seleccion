@@ -188,7 +188,7 @@ advanced_settings() {
     while [ -z "$var_version" ]; do
       if var_version=$(whiptail --backtitle "Proxmox VE Helper Scripts" --title "DEBIAN VERSION" --radiolist "Choose Version" 10 58 2 \
         "11" "Bullseye" OFF \
-        "12" "Bookworm" ON \
+        "12" "Bookworm" OFF \
         3>&1 1>&2 2>&3); then
         if [ -n "$var_version" ]; then
           echo -e "${DGN}Using $var_os Version: ${BGN}$var_version${CL}"
@@ -204,7 +204,7 @@ advanced_settings() {
     while [ -z "$var_version" ]; do
       if var_version=$(whiptail --backtitle "Proxmox VE Helper Scripts" --title "UBUNTU VERSION" --radiolist "Choose Version" 10 58 3 \
         "20.04" "Focal" OFF \
-        "22.04" "Jammy" ON \
+        "22.04" "Jammy" OFF \
         "24.04" "Noble" OFF \
         3>&1 1>&2 2>&3); then
         if [ -n "$var_version" ]; then
