@@ -171,8 +171,8 @@ advanced_settings() {
     var_os=""
     while [ -z "$var_os" ]; do
       if var_os=$(whiptail --title "DISTRIBUTION" --radiolist "Choose Distribution:" 10 58 2 \
-        "debian" "" OFF \
-        "ubuntu" "" OFF \
+        "debian (11/12)" "" OFF \
+        "ubuntu (20/22/24)" "" OFF \
         3>&1 1>&2 2>&3); then
         if [ -n "$var_os" ]; then
           echo -e "${DGN}Using Distribution: ${BGN}$var_os${CL}"
@@ -183,7 +183,8 @@ advanced_settings() {
     done
   fi
 
-  if [ "$var_os" == "debian" ]; then
+  if [ "$var_os" == "debian (11/12)" ]; then
+    $var_os="debian"
     var_version=""
     while [ -z "$var_version" ]; do
       if var_version=$(whiptail --title "DEBIAN VERSION" --radiolist "Choose Version" 10 58 2 \
@@ -199,7 +200,8 @@ advanced_settings() {
     done
   fi
 
-  if [ "$var_os" == "ubuntu" ]; then
+  if [ "$var_os" == "ubuntu (20/22/24)" ]; then
+    $var_os="ubuntu"
     var_version=""
     while [ -z "$var_version" ]; do
       if var_version=$(whiptail --title "UBUNTU VERSION" --radiolist "Choose Version" 10 58 3 \
