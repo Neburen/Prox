@@ -15,6 +15,11 @@ EOF
 }
 header_info
 echo -e "Loading..."
+var_disk="10"
+var_cpu="2"
+var_ram="2048"
+var_os=""
+var_version=""
 variables
 color
 catch_errors
