@@ -166,17 +166,16 @@ exit-script() {
 
 # This function allows the user to configure advanced settings for the script.
 advanced_settings() {
-  whiptail --backtitle "Proxmox VE Helper Scripts" --msgbox --title "Here is an instructional tip:" "To make a selection, use the Spacebar." 8 58
-  whiptail --backtitle "Proxmox VE Helper Scripts" --msgbox --title "Default distribution for $APP" "${var_os} ${var_version} \n \nIf the default Linux distribution is not adhered to, script support will be discontinued. \n" 10 58
+  whiptail --backtitle "aaaaa" --msgbox --title "Here is an instructional tip:" "Selecciona con barra espaciadora." 8 58
   if [ "$var_os" != "alpine" ]; then
     var_os=""
     while [ -z "$var_os" ]; do
-      if var_os=$(whiptail --backtitle "Proxmox VE Helper Scripts" --title "DISTRIBUTION" --radiolist "Choose Distribution:" 10 58 2 \
-        "debian" "" OFF \
-        "ubuntu" "" OFF \
+      if var_os=$(whiptail --title "DISTRIBUTION" --radiolist "Elige distro:" 10 58 2 \
+        "debian (11/12)" "" ON \
+        "ubuntu (20/22/24)" "" OFF \
         3>&1 1>&2 2>&3); then
         if [ -n "$var_os" ]; then
-          echo -e "${DGN}Using Distribution: ${BGN}$var_os${CL}"
+          echo -e "${DGN}Distribucion: ${BGN}$var_os${CL}"
         fi
       else
         exit-script
@@ -189,7 +188,7 @@ advanced_settings() {
     while [ -z "$var_version" ]; do
       if var_version=$(whiptail --backtitle "Proxmox VE Helper Scripts" --title "DEBIAN VERSION" --radiolist "Choose Version" 10 58 2 \
         "11" "Bullseye" OFF \
-        "12" "Bookworm" OFF \
+        "12" "Bookworm" ON \
         3>&1 1>&2 2>&3); then
         if [ -n "$var_version" ]; then
           echo -e "${DGN}Using $var_os Version: ${BGN}$var_version${CL}"
@@ -205,7 +204,7 @@ advanced_settings() {
     while [ -z "$var_version" ]; do
       if var_version=$(whiptail --backtitle "Proxmox VE Helper Scripts" --title "UBUNTU VERSION" --radiolist "Choose Version" 10 58 3 \
         "20.04" "Focal" OFF \
-        "22.04" "Jammy" OFF \
+        "22.04" "Jammy" ON \
         "24.04" "Noble" OFF \
         3>&1 1>&2 2>&3); then
         if [ -n "$var_version" ]; then
@@ -220,7 +219,7 @@ advanced_settings() {
   CT_TYPE=""
   while [ -z "$CT_TYPE" ]; do
     if CT_TYPE=$(whiptail --backtitle "Proxmox VE Helper Scripts" --title "CONTAINER TYPE" --radiolist "Choose Type" 10 58 2 \
-      "1" "Unprivileged" OFF \
+      "1" "Unprivileged" ON \
       "0" "Privileged" OFF \
       3>&1 1>&2 2>&3); then
       if [ -n "$CT_TYPE" ]; then
@@ -232,7 +231,7 @@ advanced_settings() {
   done
 
   while true; do
-    if PW1=$(whiptail --backtitle "Proxmox VE Helper Scripts" --passwordbox "\nSet Root Password (needed for root ssh access)" 9 58 --title "PASSWORD (leave blank for automatic login)" 3>&1 1>&2 2>&3); then
+    if PW1=$(whiptail --backtitle "Proxmox VE Helper Scripts" --passwordbox "\nRoot Password (needed for root ssh access)" 9 58 --title "PASSWORD" 3>&1 1>&2 2>&3); then
       if [[ ! -z "$PW1" ]]; then
         if [[ "$PW1" == *" "* ]]; then
           whiptail --msgbox "Password cannot contain spaces. Please try again." 8 58
@@ -263,7 +262,7 @@ advanced_settings() {
   done
 
 
-  if CT_ID=$(whiptail --backtitle "Proxmox VE Helper Scripts" --inputbox "Set Container ID" 8 58 $NEXTID --title "CONTAINER ID" 3>&1 1>&2 2>&3); then
+  if CT_ID=$(whiptail --backtitle "Proxmox VE Helper Scripts" --inputbox "Container ID" 8 58 $NEXTID --title "CONTAINER ID" 3>&1 1>&2 2>&3); then
     if [ -z "$CT_ID" ]; then
       CT_ID="$NEXTID"
       echo -e "${DGN}Using Container ID: ${BGN}$CT_ID${CL}"
@@ -274,7 +273,7 @@ advanced_settings() {
     exit
   fi
 
-  if CT_NAME=$(whiptail --backtitle "Proxmox VE Helper Scripts" --inputbox "Set Hostname" 8 58 $NSAPP --title "HOSTNAME" 3>&1 1>&2 2>&3); then
+  if CT_NAME=$(whiptail --backtitle "Proxmox VE Helper Scripts" --inputbox "Hostname" 8 58 $NSAPP --title "HOSTNAME" 3>&1 1>&2 2>&3); then
     if [ -z "$CT_NAME" ]; then
       HN="$NSAPP"
     else
@@ -285,7 +284,7 @@ advanced_settings() {
     exit-script
   fi
 
-  if DISK_SIZE=$(whiptail --backtitle "Proxmox VE Helper Scripts" --inputbox "Set Disk Size in GB" 8 58 $var_disk --title "DISK SIZE" 3>&1 1>&2 2>&3); then
+  if DISK_SIZE=$(whiptail --backtitle "Proxmox VE Helper Scripts" --inputbox "Tamaño disco (GB)" 8 58 $var_disk --title "DISK SIZE" 3>&1 1>&2 2>&3); then
     if [ -z "$DISK_SIZE" ]; then
       DISK_SIZE="$var_disk"
       echo -e "${DGN}Using Disk Size: ${BGN}$DISK_SIZE${CL}"
@@ -334,7 +333,7 @@ advanced_settings() {
   fi
 
   while true; do
-    NET=$(whiptail --backtitle "Proxmox VE Helper Scripts" --inputbox "Set a Static IPv4 CIDR Address (/24)" 8 58 dhcp --title "IP ADDRESS" 3>&1 1>&2 2>&3)
+    NET=$(whiptail --backtitle "Proxmox VE Helper Scripts" --inputbox "Set a Static IPv4 CIDR Address (al final: /24)" 8 58 dhcp --title "IP ADDRESS" 3>&1 1>&2 2>&3)
     exit_status=$?
     if [ $exit_status -eq 0 ]; then
       if [ "$NET" = "dhcp" ]; then
