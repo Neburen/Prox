@@ -137,6 +137,7 @@ exit-script() {
 # This function allows the user to configure advanced settings for the script.
 advanced_settings() {
   whiptail --msgbox --title "Here is an instructional tip:" "To make a selection, use the Spacebar." 8 58
+  var_os=""
   if [ "$var_os" != "alpine" ]; then
     var_os=""
     while [ -z "$var_os" ]; do
