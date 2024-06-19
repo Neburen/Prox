@@ -1,6 +1,4 @@
 variables() {
-  NSAPP=$(echo ${APP,,} | tr -d ' ') # This function sets the NSAPP variable by converting the value of the APP variable to lowercase and removing any spaces.
-  var_install="${NSAPP}-install"     # sets the var_install variable by appending "-install" to the value of NSAPP.
   INTEGER='^[0-9]+([.][0-9]+)?$'     # it defines the INTEGER regular expression pattern.
 }
 
@@ -95,9 +93,6 @@ root_check() {
 
 # This function checks the version of Proxmox Virtual Environment (PVE) and exits if the version is not supported.
 pve_check() {
-  if [ $(pveversion | grep "pve-manager/8" | wc -l) -ne 1 ]; then
-    whiptail --msgbox --title "Proxmox VE 7 Detected" "You are currently using Proxmox VE 7 (EOL 2024-07), refrain from creating Debian 12 LXCs. \nDefault distribution for $APP LXC is ${var_os} ${var_version}" 10 60
-  fi
   if ! pveversion | grep -Eq "pve-manager/(7\.4-(1[3-8])|8\.[1-2])"; then
     msg_error "This version of Proxmox Virtual Environment is not supported"
     echo -e "Requires PVE7 Version 7.4-13 or later, or PVE8 Version 8.1.1 or later."
@@ -131,31 +126,6 @@ ssh_check() {
   fi
 }
 
-# This function displays the default values for various settings.
-echo_default() {
-  echo -e "${DGN}Using Distribution: ${BGN}$var_os${CL}"
-  echo -e "${DGN}Using $var_os Version: ${BGN}$var_version${CL}"
-  echo -e "${DGN}Using Container Type: ${BGN}$CT_TYPE${CL}"
-  echo -e "${DGN}Using Root Password: ${BGN}Automatic Login${CL}"
-  echo -e "${DGN}Using Container ID: ${BGN}$NEXTID${CL}"
-  echo -e "${DGN}Using Hostname: ${BGN}$NSAPP${CL}"
-  echo -e "${DGN}Using Disk Size: ${BGN}$var_disk${CL}${DGN}GB${CL}"
-  echo -e "${DGN}Allocated Cores ${BGN}$var_cpu${CL}"
-  echo -e "${DGN}Allocated Ram ${BGN}$var_ram${CL}"
-  echo -e "${DGN}Using Bridge: ${BGN}vmbr0${CL}"
-  echo -e "${DGN}Using Static IP Address: ${BGN}dhcp${CL}"
-  echo -e "${DGN}Using Gateway IP Address: ${BGN}Default${CL}"
-  echo -e "${DGN}Using Apt-Cacher IP Address: ${BGN}Default${CL}"
-  echo -e "${DGN}Disable IPv6: ${BGN}No${CL}"
-  echo -e "${DGN}Using Interface MTU Size: ${BGN}Default${CL}"
-  echo -e "${DGN}Using DNS Search Domain: ${BGN}Host${CL}"
-  echo -e "${DGN}Using DNS Server Address: ${BGN}Host${CL}"
-  echo -e "${DGN}Using MAC Address: ${BGN}Default${CL}"
-  echo -e "${DGN}Using VLAN Tag: ${BGN}Default${CL}"
-  echo -e "${DGN}Enable Root SSH Access: ${BGN}No${CL}"
-  echo -e "${DGN}Enable Verbose Mode: ${BGN}No${CL}"
-  echo -e "${BL}Creating a ${APP} LXC using the above default settings${CL}"
-}
 
 # This function is called when the user decides to exit the script. It clears the screen and displays an exit message.
 exit-script() {
@@ -184,7 +154,7 @@ advanced_settings() {
   fi
 
   if [ "$var_os" == "debian (11/12)" ]; then
-    $var_os="debian"
+    var_os="debian"
     var_version=""
     while [ -z "$var_version" ]; do
       if var_version=$(whiptail --title "DEBIAN VERSION" --radiolist "Choose Version" 10 58 2 \
@@ -201,7 +171,7 @@ advanced_settings() {
   fi
 
   if [ "$var_os" == "ubuntu (20/22/24)" ]; then
-    $var_os="ubuntu"
+    var_os="ubuntu"
     var_version=""
     while [ -z "$var_version" ]; do
       if var_version=$(whiptail --title "UBUNTU VERSION" --radiolist "Choose Version" 10 58 3 \
@@ -275,9 +245,9 @@ advanced_settings() {
     exit
   fi
 
-  if CT_NAME=$(whiptail --inputbox "Hostname" 8 58 $NSAPP --title "HOSTNAME" 3>&1 1>&2 2>&3); then
+  if CT_NAME=$(whiptail --inputbox "Hostname" 8 58 --title "HOSTNAME" 3>&1 1>&2 2>&3); then
     if [ -z "$CT_NAME" ]; then
-      HN="$NSAPP"
+      HN="????"
     else
       HN=$(echo ${CT_NAME,,} | tr -d ' ')
     fi
@@ -495,7 +465,7 @@ install_script() {
 
 start() {
   if command -v pveversion >/dev/null 2>&1; then
-    if ! (whiptail --title "${APP} LXC" --yesno "This will create a New ${APP} LXC. Proceed?" 10 58); then
+    if ! (whiptail --title "??????? LXC" --yesno "This will create a New ???? LXC. Proceed?" 10 58); then
       clear
       echo -e "⚠  User exited script \n"
       exit
@@ -505,7 +475,7 @@ start() {
   fi
 
   if ! command -v pveversion >/dev/null 2>&1; then
-    if ! (whiptail --title "${APP} LXC UPDATE" --yesno "Support/Update functions for ${APP} LXC.  Proceed?" 10 58); then
+    if ! (whiptail --title "????? LXC UPDATE" --yesno "Support/Update functions for ????? LXC.  Proceed?" 10 58); then
       clear
       echo -e "⚠  User exited script \n"
       exit
@@ -528,17 +498,14 @@ build_container() {
 
   TEMP_DIR=$(mktemp -d)
   pushd $TEMP_DIR >/dev/null
-  if [ "$var_os" == "alpine" ]; then
-    export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/tteck/Proxmox/main/misc/alpine-install.func)"
-  else
-    export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/Neburen/Prox/main/install.func)"
-  fi
+
+  export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/Neburen/Prox/main/install.func)"
   export CACHER="$APT_CACHER"
   export CACHER_IP="$APT_CACHER_IP"
   export tz="$timezone"
   export DISABLEIPV6="$DISABLEIP6"
-  export APPLICATION="$APP"
-  export app="$NSAPP"
+  export APPLICATION="????"
+  export app="????"
   export PASSWORD="$PW"
   export VERBOSE="$VERB"
   export SSH_ROOT="${SSH}"
@@ -579,66 +546,13 @@ lxc.mount.entry: /dev/ttyACM1       dev/ttyACM1       none bind,optional,create=
 EOF
   fi
 
-  if [ "$CT_TYPE" == "0" ]; then
-    if [[ "$APP" == "Channels" || "$APP" == "Emby" || "$APP" == "Frigate" || "$APP" == "Jellyfin" || "$APP" == "Plex" || "$APP" == "Scrypted" || "$APP" == "Tdarr" || "$APP" == "Unmanic" ]]; then
-      cat <<EOF >>$LXC_CONFIG
-# VAAPI hardware transcoding
-lxc.cgroup2.devices.allow: c 226:0 rwm
-lxc.cgroup2.devices.allow: c 226:128 rwm
-lxc.cgroup2.devices.allow: c 29:0 rwm
-lxc.mount.entry: /dev/fb0 dev/fb0 none bind,optional,create=file
-lxc.mount.entry: /dev/dri dev/dri none bind,optional,create=dir
-lxc.mount.entry: /dev/dri/renderD128 dev/dri/renderD128 none bind,optional,create=file
-EOF
-    fi
-  else
-    if [[ "$APP" == "Channels" || "$APP" == "Emby" || "$APP" == "Frigate" || "$APP" == "Jellyfin" || "$APP" == "Plex" || "$APP" == "Scrypted" || "$APP" == "Tdarr" || "$APP" == "Unmanic" ]]; then
-      if [[ -e "/dev/dri/renderD128" ]]; then
-        if [[ -e "/dev/dri/card0" ]]; then
-          cat <<EOF >>$LXC_CONFIG
-# VAAPI hardware transcoding
-dev0: /dev/dri/card0,gid=44
-dev1: /dev/dri/renderD128,gid=104
-EOF
-        else
-          cat <<EOF >>$LXC_CONFIG
-# VAAPI hardware transcoding
-dev0: /dev/dri/card1,gid=44
-dev1: /dev/dri/renderD128,gid=104
-EOF
-        fi
-      fi
-    fi
-  fi
-
   # This starts the container and executes <app>-install.sh
   msg_info "Starting LXC Container"
   pct start "$CTID"
   msg_ok "Started LXC Container"
-  if [ "$var_os" == "alpine" ]; then
-    sleep 3
-        pct exec "$CTID" -- /bin/sh -c 'cat <<EOF >/etc/apk/repositories
-#http://dl-cdn.alpinelinux.org/alpine/latest-stable/main
-#http://dl-cdn.alpinelinux.org/alpine/latest-stable/community
-http://dl-cdn.alpinelinux.org/alpine/v3.19/main
-http://dl-cdn.alpinelinux.org/alpine/v3.19/community
-EOF'
-    pct exec "$CTID" -- ash -c "apk add bash >/dev/null"
-  fi
-  lxc-attach -n "$CTID" -- bash -c "$(wget -qLO - https://raw.githubusercontent.com/tteck/Proxmox/main/install/$var_install.sh)" || exit
-
 }
 
 # This function sets the description of the container.
 description() {
   IP=$(pct exec "$CTID" ip a s dev eth0 | awk '/inet / {print $2}' | cut -d/ -f1)
-  pct set "$CTID" -description "<div align='center'><a href='https://Helper-Scripts.com' target='_blank' rel='noopener noreferrer'><img src='https://raw.githubusercontent.com/tteck/Proxmox/main/misc/images/logo-81x112.png'/></a>
-
-  # ${APP} LXC
-
-  <a href='https://ko-fi.com/proxmoxhelperscripts'><img src='https://img.shields.io/badge/&#x2615;-Buy me a coffee-blue' /></a>
-  </div>"
-  if [[ -f /etc/systemd/system/ping-instances.service ]]; then
-    systemctl start ping-instances.service
-  fi
 }
