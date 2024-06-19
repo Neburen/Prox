@@ -160,7 +160,7 @@ echo_default() {
 # This function is called when the user decides to exit the script. It clears the screen and displays an exit message.
 exit-script() {
   clear
-  echo -e "⚠  User 3exited script \n"
+  echo -e "⚠  User exited script \n"
   exit
 }
 
@@ -470,14 +470,10 @@ advanced_settings() {
   fi
   echo -e "${DGN}Enable Verbose Mode: ${BGN}$VERB${CL}"
 
-  if (whiptail --backtitle "Proxmox VE Helper Scripts" --title "ADVANCED SETTINGS COMPLETE" --yesno "Ready to create ${APP} LXC?" 10 58); then
-    echo -e "${RD}Creating a ${APP} LXC using the above advanced settings${CL}"
-  else
-    clear
-    header_info
-    echo -e "${RD}Using Advanced Settings${CL}"
-    advanced_settings
-  fi
+  clear
+  header_info
+  advanced_settings
+
 }
 
 install_script() {
@@ -493,22 +489,14 @@ install_script() {
   NEXTID=$(pvesh get /cluster/nextid)
   timezone=$(cat /etc/timezone)
   header_info
-  if (whiptail --backtitle "Proxmox VE Helper Scripts" --title "SETTINGS" --yesno "Use Default Settings?" --no-button Advanced 10 58); then
-    header_info
-    echo -e "${BL}Using Default Settings${CL}"
-    default_settings
-  else
-    header_info
-    echo -e "${RD}Using Advanced Settings${CL}"
-    advanced_settings
-  fi
+  advanced_settings
 }
 
 start() {
   if command -v pveversion >/dev/null 2>&1; then
     if ! (whiptail --backtitle "Proxmox VE Helper Scripts" --title "${APP} LXC" --yesno "This will create a New ${APP} LXC. Proceed?" 10 58); then
       clear
-      echo -e "⚠  1User exited script \n"
+      echo -e "⚠  User exited script \n"
       exit
     fi
     SPINNER_PID=""
@@ -518,7 +506,7 @@ start() {
   if ! command -v pveversion >/dev/null 2>&1; then
     if ! (whiptail --backtitle "Proxmox VE Helper Scripts" --title "${APP} LXC UPDATE" --yesno "Support/Update functions for ${APP} LXC.  Proceed?" 10 58); then
       clear
-      echo -e "⚠  2User exited script \n"
+      echo -e "⚠  User exited script \n"
       exit
     fi
     SPINNER_PID=""
@@ -542,7 +530,7 @@ build_container() {
   if [ "$var_os" == "alpine" ]; then
     export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/tteck/Proxmox/main/misc/alpine-install.func)"
   else
-    export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/tteck/Proxmox/main/misc/install.func)"
+    export FUNCTIONS_FILE_PATH="$(curl -s https://raw.githubusercontent.com/Neburen/Prox/main/install.func)"
   fi
   export CACHER="$APT_CACHER"
   export CACHER_IP="$APT_CACHER_IP"
@@ -572,7 +560,7 @@ build_container() {
     $PW
   "
   # This executes create_lxc.sh and creates the container and .conf file
-  bash -c "$(wget -qLO - https://raw.githubusercontent.com/tteck/Proxmox/main/ct/create_lxc.sh)" || exit
+  bash -c "$(wget -qLO - https://raw.githubusercontent.com/Neburen/Prox/main/create_lxc.sh)" || exit
 
   LXC_CONFIG=/etc/pve/lxc/${CTID}.conf
   if [ "$CT_TYPE" == "0" ]; then
