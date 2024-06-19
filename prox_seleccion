@@ -166,16 +166,17 @@ exit-script() {
 
 # This function allows the user to configure advanced settings for the script.
 advanced_settings() {
-  whiptail --backtitle "aaaaa" --msgbox --title "Here is an instructional tip:" "Selecciona con barra espaciadora." 8 58
+  whiptail --backtitle "Proxmox VE Helper Scripts" --msgbox --title "Here is an instructional tip:" "To make a selection, use the Spacebar." 8 58
+  whiptail --backtitle "Proxmox VE Helper Scripts" --msgbox --title "Default distribution for $APP" "${var_os} ${var_version} \n \nIf the default Linux distribution is not adhered to, script support will be discontinued. \n" 10 58
   if [ "$var_os" != "alpine" ]; then
     var_os=""
     while [ -z "$var_os" ]; do
-      if var_os=$(whiptail --title "DISTRIBUTION" --radiolist "Elige distro:" 10 58 2 \
-        "debian (11/12)" "" OFF \
-        "ubuntu (20/22/24)" "" OFF \
+      if var_os=$(whiptail --backtitle "Proxmox VE Helper Scripts" --title "DISTRIBUTION" --radiolist "Choose Distribution:" 10 58 2 \
+        "debian" "" OFF \
+        "ubuntu" "" OFF \
         3>&1 1>&2 2>&3); then
         if [ -n "$var_os" ]; then
-          echo -e "${DGN}Distribucion: ${BGN}$var_os${CL}"
+          echo -e "${DGN}Using Distribution: ${BGN}$var_os${CL}"
         fi
       else
         exit-script
