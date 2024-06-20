@@ -574,7 +574,7 @@ update_container() {
     else
       msg_error "$message... [FAILED]\r"
     fi
-    echo -ne "\e[1A\e[K\r"
+    echo -ne "\n"
     sleep 1
   }
 
@@ -588,7 +588,10 @@ update_container() {
   execute_command_with_progress "Removing unnecessary packages" "apt autoremove -y"
 
   # Mostrar mensaje final y limpiar
-  echo -ne "\e[1A\e[K\r"
+  for (( i=1; i<=7; i++ )); do
+    echo -ne "\e[1A\e[K\r"
+    sleep 1  # Agregar un segundo de pausa entre cada ejecución si es necesario
+done
   msg_ok "Updated Container"
 }
 
