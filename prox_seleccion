@@ -578,7 +578,7 @@ update_container() {
 
   # Usa caracteres de control para mover el cursor y sobreescribir líneas
   while kill -0 $bg_pid 2>/dev/null; do
-    echo -ne "\e[K\rUpdating package list..."
+    echo -ne "\e[1A\e[K\rUpdating package list..."
     sleep 1
     echo -ne "\e[1A\e[K\rUpgrading packages..."
     sleep 1
@@ -595,7 +595,14 @@ update_container() {
   done
 
   # Comando real ejecutado en el contenedor
-  pct exec "$CTID" -- bash -c "apt update && apt upgrade -y && apt install sudo -y && apt install wget -y && apt install curl -y && curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh && apt autoremove -y"
+  pct exec "$CTID" -- bash -c "apt update"
+  pct exec "$CTID" -- bash -c "apt upgrade -y"
+  pct exec "$CTID" -- bash -c "apt install sudo -y"
+  pct exec "$CTID" -- bash -c "apt install wget -y"
+  pct exec "$CTID" -- bash -c "apt install curl -y && curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh && apt autoremove -y"
+  pct exec "$CTID" -- bash -c "curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh && apt autoremove -y"
+  pct exec "$CTID" -- bash -c "apt autoremove -y"
+
 
   # Limpiar la línea final y mostrar OK
   echo -ne "\e[1A\e[K\r"
