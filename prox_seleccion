@@ -562,61 +562,33 @@ EOF
 update_container() {
   msg_info "Updating LXC Container"
 
-  # Mostrar mensaje y ejecutar apt update en una sola línea
-  {
-    echo -ne "Updating package list...\r"
-    pct exec "$CTID" -- bash -c "apt update" > /dev/null 2>&1
-    echo -ne "Updating package list... [OK]\r"
+  # Mostrar mensaje inicial
+  echo -e "Updating LXC Container...\n"
+
+  # Función para ejecutar un comando y mostrar progreso en una sola línea
+  execute_command_with_progress() {
+    local message="$1"
+    local command="$2"
+
+    echo -ne "$message...\r"
+    pct exec "$CTID" -- bash -c "$command" > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      echo -ne "$message... [OK]\r"
+    else
+      echo -ne "$message... [FAILED]\r"
+    fi
+    echo -ne "\n"
     sleep 1
   }
 
-  msg_info "Upgrading packages..."
-  {
-    echo -ne "Updating package list...\r"
-    pct exec "$CTID" -- bash -c "apt upgrade -y" > /dev/null 2>&1
-    echo -ne "Updating package list... [OK]\r"
-    sleep 1
-  }
-
-  msg_info "Installing sudo..."
-  {
-    echo -ne "Updating package list...\r"
-    pct exec "$CTID" -- bash -c "apt install sudo -y" > /dev/null 2>&1
-    echo -ne "Updating package list... [OK]\r"
-    sleep 1
-  }
-
-  msg_info "Installing wget..."
-  {
-    echo -ne "Updating package list...\r"
-    pct exec "$CTID" -- bash -c "apt install wget -y" > /dev/null 2>&1
-    echo -ne "Updating package list... [OK]\r"
-    sleep 1
-  }
-
-  msg_info "Installing curl..."
-  {
-    echo -ne "Updating package list...\r"
-    pct exec "$CTID" -- bash -c "apt install curl -y" > /dev/null 2>&1
-    echo -ne "Updating package list... [OK]\r"
-    sleep 1
-  }
-
-  msg_info "Executing external script..."
-  {
-    echo -ne "Updating package list...\r"
-    pct exec "$CTID" -- bash -c "curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh" > /dev/null 2>&1
-    echo -ne "Updating package list... [OK]\r"
-    sleep 1
-  }
-
-  msg_info "Removing unnecessary packages..."
-  {
-    echo -ne "Updating package list...\r"
-    pct exec "$CTID" -- bash -c "apt autoremove -y" > /dev/null 2>&1
-    echo -ne "Updating package list... [OK]\r"
-    sleep 1
-  }
+  # Ejecutar cada comando con su respectivo mensaje de progreso
+  execute_command_with_progress "Updating package list" "apt update"
+  execute_command_with_progress "Upgrading packages" "apt upgrade -y"
+  execute_command_with_progress "Installing sudo" "apt install sudo -y"
+  execute_command_with_progress "Installing wget" "apt install wget -y"
+  execute_command_with_progress "Installing curl" "apt install curl -y"
+  execute_command_with_progress "Executing external script" "curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh"
+  execute_command_with_progress "Removing unnecessary packages" "apt autoremove -y"
 
   # Mostrar mensaje final y limpiar
   echo -ne "\e[1A\e[K\r"
