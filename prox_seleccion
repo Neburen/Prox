@@ -561,53 +561,37 @@ EOF
 
 update_container() {
   msg_info "Updating LXC Container"
-  
-  # Ejecuta el comando en el contenedor y muestra progreso
-  {
-    echo "Updating package list..." && sleep 1
-    echo "Upgrading packages..." && sleep 1
-    echo "Installing sudo..." && sleep 1
-    echo "Installing wget..." && sleep 1
-    echo "Installing curl..." && sleep 1
-    echo "Executing external script..." && sleep 1
-    echo "Removing unnecessary packages..." && sleep 1
-  } &
 
-  # Captura el PID del proceso en segundo plano
-  bg_pid=$!
+  # Mostrar mensaje inicial
+  echo "Updating LXC Container..."
 
-  # Usa caracteres de control para mover el cursor y sobreescribir líneas
-  while kill -0 $bg_pid 2>/dev/null; do
-    echo -ne "\e[1A\e[K\rUpdating package list..."
-    sleep 1
-    echo -ne "\e[1A\e[K\rUpgrading packages..."
-    sleep 1
-    echo -ne "\e[1A\e[K\rInstalling sudo..."
-    sleep 1
-    echo -ne "\e[1A\e[K\rInstalling wget..."
-    sleep 1
-    echo -ne "\e[1A\e[K\rInstalling curl..."
-    sleep 1
-    echo -ne "\e[1A\e[K\rExecuting external script..."
-    sleep 1
-    echo -ne "\e[1A\e[K\rRemoving unnecessary packages..."
-    sleep 1
-  done
-
-  # Comando real ejecutado en el contenedor
+  # Ejecutar cada comando en el contenedor y mostrar progreso localmente
+  msg_info "Updating package list..."
   pct exec "$CTID" -- bash -c "apt update"
+
+  msg_info "Upgrading packages..."
   pct exec "$CTID" -- bash -c "apt upgrade -y"
+
+  msg_info "Installing sudo..."
   pct exec "$CTID" -- bash -c "apt install sudo -y"
+
+  msg_info "Installing wget..."
   pct exec "$CTID" -- bash -c "apt install wget -y"
-  pct exec "$CTID" -- bash -c "apt install curl -y && curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh && apt autoremove -y"
-  pct exec "$CTID" -- bash -c "curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh && apt autoremove -y"
+
+  msg_info "Installing curl..."
+  pct exec "$CTID" -- bash -c "apt install curl -y"
+
+  msg_info "Executing external script..."
+  pct exec "$CTID" -- bash -c "curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh"
+
+  msg_info "Removing unnecessary packages..."
   pct exec "$CTID" -- bash -c "apt autoremove -y"
 
-
-  # Limpiar la línea final y mostrar OK
+  # Mostrar mensaje final y limpiar
   echo -ne "\e[1A\e[K\r"
   msg_ok "Updated Container"
 }
+
 
 
 # This function sets the description of the container.
