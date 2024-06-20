@@ -142,7 +142,7 @@ advanced_settings() {
     var_os=""
     while [ -z "$var_os" ]; do
       if var_os=$(whiptail --title "DISTRIBUTION" --radiolist "Choose Distribution:" 10 58 2 \
-        "debian (11/12)" "" OFF \
+        "debian (11/12)" "" ON \
         "ubuntu (20/22/24)" "" OFF \
         3>&1 1>&2 2>&3); then
         if [ -n "$var_os" ]; then
@@ -160,7 +160,7 @@ advanced_settings() {
     while [ -z "$var_version" ]; do
       if var_version=$(whiptail --title "DEBIAN VERSION" --radiolist "Choose Version" 10 58 2 \
         "11" "Bullseye" OFF \
-        "12" "Bookworm" OFF \
+        "12" "Bookworm" ON \
         3>&1 1>&2 2>&3); then
         if [ -n "$var_version" ]; then
           echo -e "${DGN}Using $var_os Version: ${BGN}$var_version${CL}"
@@ -177,7 +177,7 @@ advanced_settings() {
     while [ -z "$var_version" ]; do
       if var_version=$(whiptail --title "UBUNTU VERSION" --radiolist "Choose Version" 10 58 3 \
         "20.04" "Focal" OFF \
-        "22.04" "Jammy" OFF \
+        "22.04" "Jammy" ON \
         "24.04" "Noble" OFF \
         3>&1 1>&2 2>&3); then
         if [ -n "$var_version" ]; then
@@ -442,10 +442,14 @@ advanced_settings() {
   fi
   echo -e "${DGN}Enable Verbose Mode: ${BGN}$VERB${CL}"
 
-  clear
-  header_info
-  advanced_settings
-
+if (whiptail --title "ADVANCED SETTINGS COMPLETE" --yesno "Ready to create LXC?" 10 58); then
+    echo -e "${RD}Creating a LXC using the above advanced settings${CL}"
+  else
+    clear
+    header_info
+    echo -e "${RD}Using Advanced Settings${CL}"
+    advanced_settings
+  fi
 }
 
 install_script() {
@@ -466,7 +470,7 @@ install_script() {
 
 start() {
   if command -v pveversion >/dev/null 2>&1; then
-    if ! (whiptail --title "??????? LXC" --yesno "This will create a New ???? LXC. Proceed?" 10 58); then
+    if ! (whiptail --title "Crear LXC" --yesno "Crear un LXC?" 10 58); then
       clear
       echo -e "⚠  User exited script \n"
       exit
@@ -476,7 +480,7 @@ start() {
   fi
 
   if ! command -v pveversion >/dev/null 2>&1; then
-    if ! (whiptail --title "????? LXC UPDATE" --yesno "Support/Update functions for ????? LXC.  Proceed?" 10 58); then
+    if ! (whiptail --title "LXC UPDATE" --yesno "Support/Update functions for LXC.  Proceed?" 10 58); then
       clear
       echo -e "⚠  User exited script \n"
       exit
