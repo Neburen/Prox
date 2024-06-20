@@ -567,12 +567,12 @@ update_container() {
     local message="$1"
     local command="$2"
 
-    msg_info "$message..."
+    echo -e "$message...\r"
     pct exec "$CTID" -- bash -c "$command" > /dev/null 2>&1
     if [ $? -eq 0 ]; then
-      msg_ok "$message... [OK]"
+      echo -e "$message... [OK]\r"
     else
-      msg_error "$message... [FAILED]"
+      echo -e "$message... [FAILED]\r"
     fi
     sleep 1
   }
