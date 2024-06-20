@@ -574,7 +574,7 @@ update_container() {
     else
       msg_error "$message... [FAILED]\r"
     fi
-    echo -ne "\n"
+    echo -ne "\e[1A\e[K\r"
     sleep 1
   }
 
