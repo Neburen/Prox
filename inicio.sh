@@ -26,6 +26,7 @@ catch_errors
 
 start
 build_container
+update_container
 description
 
 msg_ok "Completed Successfully!\n"
