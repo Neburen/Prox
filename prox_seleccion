@@ -585,6 +585,7 @@ update_container() {
     echo -ne "Updating package list... [OK]\r"
     sleep 1
   }
+
   msg_info "Installing wget..."
   {
     echo -ne "Updating package list...\r"
@@ -592,6 +593,7 @@ update_container() {
     echo -ne "Updating package list... [OK]\r"
     sleep 1
   }
+
   msg_info "Installing curl..."
   {
     echo -ne "Updating package list...\r"
@@ -599,6 +601,7 @@ update_container() {
     echo -ne "Updating package list... [OK]\r"
     sleep 1
   }
+
   msg_info "Executing external script..."
   {
     echo -ne "Updating package list...\r"
@@ -606,6 +609,7 @@ update_container() {
     echo -ne "Updating package list... [OK]\r"
     sleep 1
   }
+
   msg_info "Removing unnecessary packages..."
   {
     echo -ne "Updating package list...\r"
@@ -613,6 +617,7 @@ update_container() {
     echo -ne "Updating package list... [OK]\r"
     sleep 1
   }
+
   # Mostrar mensaje final y limpiar
   echo -ne "\e[1A\e[K\r"
   msg_ok "Updated Container"
