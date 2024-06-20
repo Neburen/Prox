@@ -565,9 +565,14 @@ update_container() {
   # Mostrar mensaje inicial
   echo "Updating LXC Container..."
 
-  # Ejecutar cada comando en el contenedor y mostrar progreso localmente
-  msg_info "Updating package list..."
-  pct exec "$CTID" -- bash -c "apt update"
+  # Mostrar mensaje y ejecutar apt update en una sola línea
+  {
+    echo -ne "Updating package list...\r"
+    pct exec "$CTID" -- bash -c "apt update" > /dev/null 2>&1
+    echo -ne "Updating package list... [OK]\r"
+    sleep 1
+  }
+
 
   msg_info "Upgrading packages..."
   pct exec "$CTID" -- bash -c "apt upgrade -y"
