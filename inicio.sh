@@ -24,21 +24,6 @@ variables
 color
 catch_errors
 
-function update_script() {
-header_info
-msg_info "Updating LXC"
-apt-get update &>/dev/null
-apt-get -y upgrade &>/dev/null
-apt-get install -y curl
-apt-get install -y sudo
-apt-get -y autoremove &>/dev/null
-
-msg_ok "Installed Dependencies"
-
-msg_ok "Updated ${APP} LXC"
-exit
-}
-
 start
 build_container
 description

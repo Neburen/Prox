@@ -522,7 +522,6 @@ build_container() {
   export PCT_OPTIONS="
     -features $FEATURES
     -hostname $HN
-    -tags proxmox-helper-scripts
     $SD
     $NS
     -net0 name=eth0,bridge=$BRG$MAC,ip=$NET$GATE$VLAN$MTU
@@ -555,6 +554,7 @@ EOF
   msg_info "Starting LXC Container"
   pct start "$CTID"
   msg_ok "Started LXC Container"
+  lxc-attach -n "$CTID" -- apt-get update &>/dev/null && apt-get -y upgrade &>/dev/null && apt-get install -y curl && apt-get install -y sudo && apt-get -y autoremove &>/dev/null || exit
 }
 
 # This function sets the description of the container.
