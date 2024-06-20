@@ -554,7 +554,6 @@ EOF
   msg_info "Starting LXC Container"
   pct start "$CTID"
   msg_ok "Started LXC Container"
-  pct exec "$CTID" -- apt-get update &>/dev/null && apt-get -y upgrade &>/dev/null && apt-get install -y curl && apt-get install -y sudo && apt-get -y autoremove &>/dev/null || exit
 }
 
 # This function sets the description of the container.
