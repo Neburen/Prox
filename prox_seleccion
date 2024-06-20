@@ -562,9 +562,6 @@ EOF
 update_container() {
   msg_info "Updating LXC Container"
 
-  # Mostrar mensaje inicial
-  echo "Updating LXC Container..."
-
   # Mostrar mensaje y ejecutar apt update en una sola línea
   {
     echo -ne "Updating package list...\r"
@@ -573,25 +570,49 @@ update_container() {
     sleep 1
   }
 
-
   msg_info "Upgrading packages..."
-  pct exec "$CTID" -- bash -c "apt upgrade -y"
+  {
+    echo -ne "Updating package list...\r"
+    pct exec "$CTID" -- bash -c "apt upgrade -y" > /dev/null 2>&1
+    echo -ne "Updating package list... [OK]\r"
+    sleep 1
+  }
 
   msg_info "Installing sudo..."
-  pct exec "$CTID" -- bash -c "apt install sudo -y"
-
+  {
+    echo -ne "Updating package list...\r"
+    pct exec "$CTID" -- bash -c "apt install sudo -y" > /dev/null 2>&1
+    echo -ne "Updating package list... [OK]\r"
+    sleep 1
+  }
   msg_info "Installing wget..."
-  pct exec "$CTID" -- bash -c "apt install wget -y"
-
+  {
+    echo -ne "Updating package list...\r"
+    pct exec "$CTID" -- bash -c "apt install wget -y" > /dev/null 2>&1
+    echo -ne "Updating package list... [OK]\r"
+    sleep 1
+  }
   msg_info "Installing curl..."
-  pct exec "$CTID" -- bash -c "apt install curl -y"
-
+  {
+    echo -ne "Updating package list...\r"
+    pct exec "$CTID" -- bash -c "apt install curl -y" > /dev/null 2>&1
+    echo -ne "Updating package list... [OK]\r"
+    sleep 1
+  }
   msg_info "Executing external script..."
-  pct exec "$CTID" -- bash -c "curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh"
-
+  {
+    echo -ne "Updating package list...\r"
+    pct exec "$CTID" -- bash -c "curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh" > /dev/null 2>&1
+    echo -ne "Updating package list... [OK]\r"
+    sleep 1
+  }
   msg_info "Removing unnecessary packages..."
-  pct exec "$CTID" -- bash -c "apt autoremove -y"
-
+  {
+    echo -ne "Updating package list...\r"
+    pct exec "$CTID" -- bash -c "apt autoremove -y" > /dev/null 2>&1
+    echo -ne "Updating package list... [OK]\r"
+    sleep 1
+  }
   # Mostrar mensaje final y limpiar
   echo -ne "\e[1A\e[K\r"
   msg_ok "Updated Container"
