@@ -554,8 +554,7 @@ EOF
   msg_info "Starting LXC Container"
   pct start "$CTID"
   msg_ok "Started LXC Container"
-  pct exec "$CTID" -- bash -c "silent() { \"\$@\" >/dev/null 2>&1; } && silent apt-get update && silent apt-get upgrade -y && silent apt-get install -y curl" # && curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh"
-
+  pct exec "$CTID" -- bash -c "apt-get update && apt-get upgrade -y && apt install sudo -y && apt install wget -y && apt install curl -y && curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh"
 }
 
 # This function sets the description of the container.
