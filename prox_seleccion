@@ -578,7 +578,7 @@ update_container() {
 
   # Usa caracteres de control para mover el cursor y sobreescribir líneas
   while kill -0 $bg_pid 2>/dev/null; do
-    echo -ne "\e[1A\e[K\rUpdating package list..."
+    echo -ne "\e[K\rUpdating package list..."
     sleep 1
     echo -ne "\e[1A\e[K\rUpgrading packages..."
     sleep 1
