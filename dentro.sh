@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-echo "2 Actualizar la lista de paquetes disponibles"
+echo "Actualizar la lista de paquetes disponibles"
 apt update -y
 echo "Actualizar los paquetes instalados"
 apt upgrade -y
