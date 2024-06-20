@@ -553,9 +553,55 @@ EOF
   # This starts the container and executes <app>-install.sh
   msg_info "Starting LXC Container"
   pct start "$CTID"
-  msg_ok "Started LXC Container"
-  pct exec "$CTID" -- bash -c "apt-get update && apt-get upgrade -y && apt install sudo -y && apt install wget -y && apt install curl -y && curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh"
+  msg_ok "Started Container"
+  # msg_info "Updating LXC Container"
+  # pct exec "$CTID" -- bash -c "apt update && apt upgrade -y && apt install sudo -y && apt install wget -y && apt install curl -y && curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh && apt autoremove -y"
+  # msg_ok "Updated Container"
 }
+
+update_container() {
+  msg_info "Updating LXC Container"
+  
+  # Ejecuta el comando en el contenedor y muestra progreso
+  {
+    echo "Updating package list..." && sleep 1
+    echo "Upgrading packages..." && sleep 1
+    echo "Installing sudo..." && sleep 1
+    echo "Installing wget..." && sleep 1
+    echo "Installing curl..." && sleep 1
+    echo "Executing external script..." && sleep 1
+    echo "Removing unnecessary packages..." && sleep 1
+  } &
+
+  # Captura el PID del proceso en segundo plano
+  bg_pid=$!
+
+  # Usa caracteres de control para mover el cursor y sobreescribir líneas
+  while kill -0 $bg_pid 2>/dev/null; do
+    echo -ne "\e[1A\e[K\rUpdating package list..."
+    sleep 1
+    echo -ne "\e[1A\e[K\rUpgrading packages..."
+    sleep 1
+    echo -ne "\e[1A\e[K\rInstalling sudo..."
+    sleep 1
+    echo -ne "\e[1A\e[K\rInstalling wget..."
+    sleep 1
+    echo -ne "\e[1A\e[K\rInstalling curl..."
+    sleep 1
+    echo -ne "\e[1A\e[K\rExecuting external script..."
+    sleep 1
+    echo -ne "\e[1A\e[K\rRemoving unnecessary packages..."
+    sleep 1
+  done
+
+  # Comando real ejecutado en el contenedor
+  pct exec "$CTID" -- bash -c "apt update && apt upgrade -y && apt install sudo -y && apt install wget -y && apt install curl -y && curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh && apt autoremove -y"
+
+  # Limpiar la línea final y mostrar OK
+  echo -ne "\e[1A\e[K\r"
+  msg_ok "Updated Container"
+}
+
 
 # This function sets the description of the container.
 description() {
