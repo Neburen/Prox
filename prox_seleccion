@@ -560,7 +560,7 @@ EOF
 }
 
 update_container() {
-  msg_info "Updating LXC Container"
+  msg_info "Updating LXC Container\n"
 
   # Función para ejecutar un comando y mostrar progreso en una sola línea
   execute_command_with_progress() {
