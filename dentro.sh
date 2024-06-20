@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
-
-# Habilitar modo de depuración para ver cada comando ejecutado
-set -x
-
 echo "Actualizar la lista de paquetes disponibles"
-apt update -y
+apt-get update
 
 echo "Actualizar los paquetes instalados"
-apt upgrade -y
+apt-get -y upgrade
 
 echo "Instalar herramientas necesarias"
 apt-get install -y curl
@@ -18,7 +14,4 @@ echo "Descargar el script adicional"
 wget https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh
 
 echo "Eliminar paquetes innecesarios"
-apt autoremove -y
-
-# Deshabilitar modo de depuración
-set +x
+apt-get -y autoremove
