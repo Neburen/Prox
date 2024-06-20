@@ -532,7 +532,7 @@ build_container() {
     $PW
   "
   # This executes create_lxc.sh and creates the container and .conf file
-  bash -c "$(wget -qLO - https://raw.githubusercontent.com/Neburen/Prox/main/dentro.sh)" || exit
+  bash -c "$(wget -qLO - https://raw.githubusercontent.com/Neburen/Prox/main/create_lxc.sh)" || exit
 
   LXC_CONFIG=/etc/pve/lxc/${CTID}.conf
   if [ "$CT_TYPE" == "0" ]; then
@@ -554,6 +554,8 @@ EOF
   msg_info "Starting LXC Container"
   pct start "$CTID"
   msg_ok "Started LXC Container"
+  pct exec "$CTID" -- bash -c "silent() { \"\$@\" >/dev/null 2>&1; } && $STD apt-get update && $STD apt-get upgrade -y && $STD apt-get install -y curl" # && curl -s https://raw.githubusercontent.com/Neburen/Prox/main/crear_servicio.sh"
+
 }
 
 # This function sets the description of the container.
